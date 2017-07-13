@@ -7,9 +7,14 @@ import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 export default class Header extends Component{
-
+    handleChange(event){
+        if (event.keyCode == 13 && this.text.input.value != ''){
+            this.props.actions.add(this.text.input.value)
+            this.text.input.value = ''
+        }
+    }
     handleClick(){
-        if (this.text.value != '')
+        if (this.text.input.value != '')
             this.props.actions.add(this.text.input.value)
         this.text.input.value = ''
     }
@@ -34,6 +39,7 @@ export default class Header extends Component{
                 <MuiThemeProvider>
                     <TextField
                         hintText="Enter TODO"
+                        onKeyUp={this.handleChange.bind(this)}
                         ref={input => this.text = input}
                     />
                 </MuiThemeProvider>

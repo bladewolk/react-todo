@@ -25139,9 +25139,17 @@ var Header = function (_Component) {
     }
 
     _createClass(Header, [{
+        key: 'handleChange',
+        value: function handleChange(event) {
+            if (event.keyCode == 13 && this.text.input.value != '') {
+                this.props.actions.add(this.text.input.value);
+                this.text.input.value = '';
+            }
+        }
+    }, {
         key: 'handleClick',
         value: function handleClick() {
-            if (this.text.value != '') this.props.actions.add(this.text.input.value);
+            if (this.text.input.value != '') this.props.actions.add(this.text.input.value);
             this.text.input.value = '';
         }
     }, {
@@ -25175,6 +25183,7 @@ var Header = function (_Component) {
                     null,
                     _react2.default.createElement(_TextField2.default, {
                         hintText: 'Enter TODO',
+                        onKeyUp: this.handleChange.bind(this),
                         ref: function ref(input) {
                             return _this2.text = input;
                         }
