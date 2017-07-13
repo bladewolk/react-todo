@@ -14,9 +14,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $items = Todo::latest()->get();
-        
-        return $items;
+        return Todo::latest()->get();
     }
 
     /**
