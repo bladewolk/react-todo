@@ -12,6 +12,18 @@
 
 
     </head>
+    <style>
+        .loading{
+            position: fixed;
+            display: block !important;
+            width: 80px;
+            height: 80px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            top: 50vh;
+        }
+    </style>
     <body>
       <div id="root">
 

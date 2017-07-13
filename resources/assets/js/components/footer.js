@@ -20,26 +20,28 @@ export default class Footer extends Component {
                 display: 'inline-block'
             },
         };
-        return(
-            <MuiThemeProvider>
-                <RadioButtonGroup name="shipSpeed" defaultSelected="FILTER_ALL" onChange={this.handleChange.bind(this)}>
-                    <RadioButton
-                        value="FILTER_ALL"
-                        label="All"
-                        style={styles.radioButton}
-                    />
-                    <RadioButton
-                        value="FILTER_ACTIVE"
-                        label="Active"
-                        style={styles.radioButton}
-                    />
-                    <RadioButton
-                        value="FILTER_DONE"
-                        label="Completed"
-                        style={styles.radioButton}
-                    />
-                </RadioButtonGroup>
-            </MuiThemeProvider>
-        )
+        if (this.props.count > 0)
+            return(
+                <MuiThemeProvider>
+                    <RadioButtonGroup name="shipSpeed" defaultSelected="FILTER_ALL" onChange={this.handleChange.bind(this)}>
+                        <RadioButton
+                            value="FILTER_ALL"
+                            label="All"
+                            style={styles.radioButton}
+                        />
+                        <RadioButton
+                            value="FILTER_ACTIVE"
+                            label="Active"
+                            style={styles.radioButton}
+                        />
+                        <RadioButton
+                            value="FILTER_DONE"
+                            label="Completed"
+                            style={styles.radioButton}
+                        />
+                    </RadioButtonGroup>
+                </MuiThemeProvider>
+            )
+        return null
     }
 }

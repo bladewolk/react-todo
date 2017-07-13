@@ -32,3 +32,8 @@ export function filter(filter){
         type: filter,
     }
 }
+export function toggleFetched(){
+    return {
+        type: 'TOGGLE_FETCHED'
+    }
+}

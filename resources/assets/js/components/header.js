@@ -7,22 +7,90 @@ import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 export default class Header extends Component{
-    handleChange(event){
-        if (event.keyCode == 13 && this.text.input.value != ''){
-            this.props.actions.add(this.text.input.value)
+    handleChange(event) {
+        if (event.keyCode == 13)
+            this.handleClick()
+    }
+
+    handleClick(){
+        if (this.text.input.value != ''){
+            let {add, toggleFetched} = this.props.actions;
+            toggleFetched();
+            fetch("/api/todo", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    text: this.text.input.value
+                })
+            })
+                .then(
+                    function(response) {
+                        if (response.status !== 200) {
+                            console.log('Looks like there was a problem. Status Code: ' +
+                                response.status);
+                            return;
+                        }
+                        response.json().then(function(data) {
+                            add(data);
+                            toggleFetched();
+                        });
+                    }
+                )
+                .catch(function(err) {
+                    console.log('Fetch Error :-S', err);
+                });
             this.text.input.value = ''
         }
     }
-    handleClick(){
-        if (this.text.input.value != '')
-            this.props.actions.add(this.text.input.value)
-        this.text.input.value = ''
-    }
     handleDone(key){
-        this.props.actions.done(key)
+        let {done} = this.props.actions;
+        fetch("/api/todo/"+key, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(
+                function(response) {
+                    if (response.status !== 200) {
+                        console.log('Looks like there was a problem. Status Code: ' +
+                            response.status);
+                        return;
+                    }
+                    response.json().then(function(id) {
+                       done(id)
+                    });
+                }
+            )
+            .catch(function(err) {
+                console.log('Fetch Error :-S', err);
+            });
     }
     handleDrop(key){
-        this.props.actions.del(key)
+        let {del} = this.props.actions
+        fetch("/api/todo/"+key, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(
+                function(response) {
+                    if (response.status !== 200) {
+                        console.log('Looks like there was a problem. Status Code: ' +
+                            response.status);
+                        return;
+                    }
+                    response.json().then(function(id) {
+                        del(id)
+                    });
+                }
+            )
+            .catch(function(err) {
+                console.log('Fetch Error :-S', err);
+            });
     }
 
     render(){
@@ -51,14 +119,12 @@ export default class Header extends Component{
                     return (<MuiThemeProvider key={key}>
                         <AppBar
                             style={item.done ? done : undone}
-                            title={<span>{item.name}</span>}
+                            title={<span>{item.text}</span>}
                             iconElementLeft={<IconButton><NavigationClose onClick={this.handleDrop.bind(this,item.id)} /></IconButton>}
                             iconElementRight={<FlatButton label={item.done ? 'UNDONE':'done'} onClick={this.handleDone.bind(this, item.id)} />}
                         />
                     </MuiThemeProvider>)
                 })}
-
-
             </div>
         )
     }

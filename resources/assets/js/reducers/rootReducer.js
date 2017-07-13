@@ -1,6 +1,7 @@
 const initialState = {
     items: [],
-    filter: 'FILTER_ALL'
+    filter: 'FILTER_ALL',
+    fetched: false
 }
 
 const rootReducer = (state = initialState, action) =>{
@@ -8,19 +9,19 @@ const rootReducer = (state = initialState, action) =>{
         case 'REQUEST_LOAD':{
             return {
                 ...state,
-                items: action.payload
+                items: action.payload,
+                fetched: true
             }
+        }
+        case 'TOGGLE_FETCHED':{
+            return {...state, fetched: !state.fetched}
         }
         case 'ADD':{
             return {
                 ...state,
                 items: [
                     ...state.items,
-                    {
-                        id: Math.random().toString(36).substr(2, 9),
-                        name: action.payload,
-                        done: false
-                    }
+                    action.payload
                 ]
             }
         }
