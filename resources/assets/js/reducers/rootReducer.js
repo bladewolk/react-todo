@@ -1,5 +1,6 @@
 const initialState = {
-    items: []
+    items: [],
+    filter: 'FILTER_ALL'
 }
 
 const rootReducer = (state = initialState, action) =>{
@@ -16,6 +17,7 @@ const rootReducer = (state = initialState, action) =>{
                 items: [
                     ...state.items,
                     {
+                        id: Math.random().toString(36).substr(2, 9),
                         name: action.payload,
                         done: false
                     }
@@ -27,7 +29,7 @@ const rootReducer = (state = initialState, action) =>{
                 ...state,
                 items:
                     state.items.filter((item, index)=>{
-                        return index != action.payload
+                        return item.id != action.payload
                     })
             }
         }
@@ -35,11 +37,29 @@ const rootReducer = (state = initialState, action) =>{
             return {
                 ...state,
                 items: state.items.map((item,index) => {
-                    if (index == action.payload){
+                    if (item.id == action.payload){
                         item.done = !item.done
                     }
                     return item;
                 })
+            }
+        }
+        case 'FILTER_ALL':{
+            return {
+                ...state,
+                filter: 'FILTER_ALL'
+            }
+        }
+        case 'FILTER_ACTIVE':{
+            return {
+                ...state,
+                filter: 'FILTER_ACTIVE'
+            }
+        }
+        case 'FILTER_DONE':{
+            return {
+                ...state,
+                filter: 'FILTER_DONE'
             }
         }
         default:{

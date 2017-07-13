@@ -40,17 +40,14 @@ export default class Header extends Component{
                 <MuiThemeProvider>
                     <FlatButton label="DISPATCH" primary={true} onClick={this.handleClick.bind(this)}/>
                 </MuiThemeProvider>
-                    {/*{this.props.items.map((item,key)=>{*/}
-                        {/*return (<li style={item.done ? done : normal} key={key} onClick={this.handleDone.bind(this, key)} >{item.name}</li>)*/}
-                    {/*})}*/}
 
                 {this.props.items.map((item,key)=>{
                     return (<MuiThemeProvider key={key}>
                         <AppBar
                             style={item.done ? done : undone}
                             title={<span>{item.name}</span>}
-                            iconElementLeft={<IconButton><NavigationClose onClick={this.handleDrop.bind(this,key)} /></IconButton>}
-                            iconElementRight={<FlatButton label={item.done ? 'UNDONE':'done'} onClick={this.handleDone.bind(this, key)} />}
+                            iconElementLeft={<IconButton><NavigationClose onClick={this.handleDrop.bind(this,item.id)} /></IconButton>}
+                            iconElementRight={<FlatButton label={item.done ? 'UNDONE':'done'} onClick={this.handleDone.bind(this, item.id)} />}
                         />
                     </MuiThemeProvider>)
                 })}

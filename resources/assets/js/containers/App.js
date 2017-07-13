@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import Header from '../components/header'
+import Footer from '../components/footer'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import * as actions from '../actions'
@@ -27,16 +28,30 @@ class App extends Component{
         //     });
     }
     render(){
-        let {items} = this.props
+        let {items, filter} = this.props
+        let filterApply = (items, filter) => {
+            switch (filter) {
+                case 'FILTER_ALL':
+                    return items
+                case 'FILTER_ACTIVE':
+                    return items.filter(t => !t.done)
+                case 'FILTER_DONE':
+                    return items.filter(t => t.done)
+            }
+        }
         return (
-            <Header items={items} actions={this.props.actions} />
+            <div>
+                <Header items={filterApply(items, filter)} actions={this.props.actions} />
+                <Footer actions={this.props.actions} />
+            </div>
         )
     }
 }
 
 function mapStateToProps (state) {
     return {
-        items: state.items
+        items: state.items,
+        filter: state.filter
     }
 }
 

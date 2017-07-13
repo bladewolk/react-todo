@@ -26,3 +26,9 @@ export function done(key){
         payload: key
     }
 }
+
+export function filter(filter){
+    return {
+        type: filter,
+    }
+}
