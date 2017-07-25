@@ -44,6 +44,11 @@ module.exports = {
         port: 8080,
         hot: true,
         inline: true,
-        contentBase: __dirname + "/public",
+        proxy: {
+            "/api/*": {
+                target: "http://react-todo.dev"
+            }
+        },
+        contentBase: "public",
     }
 };

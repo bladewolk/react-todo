@@ -1,4 +1,8 @@
-
+export function reset(){
+    return {
+        type: "RESET"
+    }
+}
 export function add(item){
     return {
         type: "ADD",
@@ -27,13 +31,20 @@ export function done(key){
     }
 }
 
-export function filter(filter){
+export function toggleFilter(){
     return {
-        type: filter,
+        type: 'TOGGLE_FILTER',
     }
 }
 export function toggleFetched(){
     return {
         type: 'TOGGLE_FETCHED'
+    }
+}
+
+export function setTextFieldValue(value){
+    return {
+        type: 'SET_FIELD_VALUE',
+        payload: value
     }
 }

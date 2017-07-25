@@ -1,7 +1,8 @@
 const initialState = {
     items: [],
-    filter: 'FILTER_ALL',
-    fetched: false
+    filter: false,
+    fetched: false,
+    textValue: ''
 }
 
 const rootReducer = (state = initialState, action) =>{
@@ -9,8 +10,7 @@ const rootReducer = (state = initialState, action) =>{
         case 'REQUEST_LOAD':{
             return {
                 ...state,
-                items: action.payload,
-                fetched: true
+                items: action.payload
             }
         }
         case 'TOGGLE_FETCHED':{
@@ -45,22 +45,22 @@ const rootReducer = (state = initialState, action) =>{
                 })
             }
         }
-        case 'FILTER_ALL':{
+        case 'TOGGLE_FILTER':{
             return {
                 ...state,
-                filter: 'FILTER_ALL'
+                filter: !state.filter
             }
         }
-        case 'FILTER_ACTIVE':{
+        case 'SET_FIELD_VALUE':{
             return {
                 ...state,
-                filter: 'FILTER_ACTIVE'
+                textValue: action.payload
             }
         }
-        case 'FILTER_DONE':{
+        case 'RESET':{
             return {
                 ...state,
-                filter: 'FILTER_DONE'
+                textValue: ''
             }
         }
         default:{
