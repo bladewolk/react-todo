@@ -27108,8 +27108,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
@@ -27142,199 +27140,140 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var componentMount = function componentMount(_ref) {
+    var load = _ref.load,
+        toggleFetched = _ref.toggleFetched,
+        dataloader = _ref.dataloader;
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+    dataloader();
+    fetch('/api/todo').then(function (response) {
+        if (response.status !== 200) {
+            console.log('Looks like there was a problem. Status Code: ' + response.status);
+            return;
+        }
+        response.json().then(function (data) {
+            load(data);
+            toggleFetched();
+        });
+    }).catch(function (err) {
+        console.log('Fetch Error :-S', err);
+    });
+};
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+var LoadSpinner = function LoadSpinner() {
+    return _react2.default.createElement(
+        'div',
+        { className: 'spinner' },
+        _react2.default.createElement(
+            _MuiThemeProvider2.default,
+            null,
+            _react2.default.createElement(_CircularProgress2.default, { color: '#E91E63', size: 100, thickness: 4 })
+        )
+    );
+};
 
-var App = function (_Component) {
-    _inherits(App, _Component);
+var App = function App(props) {
+    if (!props.dataLoaded) componentMount(props.actions);
 
-    function App() {
-        _classCallCheck(this, App);
-
-        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
-    }
-
-    _createClass(App, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var _props$actions = this.props.actions,
-                load = _props$actions.load,
-                toggleFetched = _props$actions.toggleFetched;
-
-            fetch('/api/todo').then(function (response) {
+    var inputChange = function inputChange(event, value) {
+        props.actions.setTextFieldValue(value);
+    };
+    var inputEnter = function inputEnter(event) {
+        if (event.which == 13) buttonClick();
+    };
+    var buttonClick = function buttonClick() {
+        if (props.textValue.length > 0) {
+            props.actions.toggleFetched();
+            fetch("/api/todo", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: props.textValue })
+            }).then(function (response) {
                 if (response.status !== 200) {
                     console.log('Looks like there was a problem. Status Code: ' + response.status);
                     return;
                 }
                 response.json().then(function (data) {
-                    load(data);
-                    toggleFetched();
+                    props.actions.add(data);
+                    props.actions.reset();
+                    props.actions.toggleFetched();
                 });
             }).catch(function (err) {
                 console.log('Fetch Error :-S', err);
             });
         }
-        //input change
-
-    }, {
-        key: 'handleChange',
-        value: function handleChange(event, value) {
-            this.props.actions.setTextFieldValue(value);
-        }
-    }, {
-        key: 'handleEnter',
-        value: function handleEnter(event) {
-            if (event.which == 13) this.handleClick();
-        }
-        //Dispatch button click
-
-    }, {
-        key: 'handleClick',
-        value: function handleClick() {
-            if (this.props.textValue.length > 0) {
-                var _props$actions2 = this.props.actions,
-                    add = _props$actions2.add,
-                    reset = _props$actions2.reset,
-                    toggleFetched = _props$actions2.toggleFetched;
-
-                toggleFetched();
-                fetch("/api/todo", {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: this.props.textValue })
-                }).then(function (response) {
-                    if (response.status !== 200) {
-                        console.log('Looks like there was a problem. Status Code: ' + response.status);
-                        return;
-                    }
-                    response.json().then(function (data) {
-                        add(data);
-                        reset();
-                        toggleFetched();
-                    });
-                }).catch(function (err) {
-                    console.log('Fetch Error :-S', err);
-                });
+    };
+    var changeFilter = function changeFilter() {
+        props.actions.toggleFilter();
+        props.actions.toggleFetched();
+        fetch("/api/todo?filter=" + !props.filter).then(function (response) {
+            if (response.status !== 200) {
+                console.log('Looks like there was a problem. Status Code: ' + response.status);
+                return;
             }
-        }
-    }, {
-        key: 'toggleDone',
-        value: function toggleDone(id) {
-            var _props$actions3 = this.props.actions,
-                toggleFetched = _props$actions3.toggleFetched,
-                done = _props$actions3.done;
-
-            toggleFetched();
-            fetch("/api/todo/" + id, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id, _method: 'PATCH' })
-            }).then(function (response) {
-                if (response.status !== 200) {
-                    console.log('Looks like there was a problem. Status Code: ' + response.status);
-                    return;
-                }
-                response.json().then(function (data) {
-                    done(id);
-                    toggleFetched();
-                });
-            }).catch(function (err) {
-                console.log('Fetch Error :-S', err);
+            response.json().then(function (data) {
+                props.actions.load(data);
+                props.actions.toggleFetched();
             });
-        }
-    }, {
-        key: 'handleDrop',
-        value: function handleDrop(id) {
-            var _props$actions4 = this.props.actions,
-                toggleFetched = _props$actions4.toggleFetched,
-                del = _props$actions4.del;
-
-            toggleFetched();
-            fetch("/api/todo/" + id, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ _method: 'DELETE' })
-            }).then(function (response) {
-                if (response.status !== 200) {
-                    console.log('Looks like there was a problem. Status Code: ' + response.status);
-                    return;
-                }
-                response.json().then(function (data) {
-                    del(id);
-                    toggleFetched();
-                });
-            }).catch(function (err) {
-                console.log('Fetch Error :-S', err);
+        }).catch(function (err) {
+            console.log('Fetch Error :-S', err);
+        });
+    };
+    var handleDrop = function handleDrop(id) {
+        props.actions.toggleFetched();
+        fetch("/api/todo/" + id, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ _method: 'DELETE' })
+        }).then(function (response) {
+            if (response.status !== 200) {
+                console.log('Looks like there was a problem. Status Code: ' + response.status);
+                return;
+            }
+            response.json().then(function (data) {
+                props.actions.del(id);
+                props.actions.toggleFetched();
             });
-        }
-    }, {
-        key: 'handleFilter',
-        value: function handleFilter() {
-            var _props$actions5 = this.props.actions,
-                toggleFilter = _props$actions5.toggleFilter,
-                toggleFetched = _props$actions5.toggleFetched,
-                load = _props$actions5.load;
-
-            toggleFilter();
-            toggleFetched();
-            fetch("/api/todo?filter=" + !this.props.filter).then(function (response) {
-                if (response.status !== 200) {
-                    console.log('Looks like there was a problem. Status Code: ' + response.status);
-                    return;
-                }
-                response.json().then(function (data) {
-                    load(data);
-                    toggleFetched();
-                });
-            }).catch(function (err) {
-                console.log('Fetch Error :-S', err);
+        }).catch(function (err) {
+            console.log('Fetch Error :-S', err);
+        });
+    };
+    var toggleDone = function toggleDone(id) {
+        props.actions.toggleFetched();
+        fetch("/api/todo/" + id, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id, _method: 'PATCH' })
+        }).then(function (response) {
+            if (response.status !== 200) {
+                console.log('Looks like there was a problem. Status Code: ' + response.status);
+                return;
+            }
+            response.json().then(function (data) {
+                props.actions.done(id);
+                props.actions.toggleFetched();
             });
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var change = this.handleChange.bind(this);
-            var enter = this.handleEnter.bind(this);
-            var click = this.handleClick.bind(this);
-            var textValue = this.props.textValue;
-            var done = this.toggleDone.bind(this);
-            var handleDrop = this.handleDrop.bind(this);
-            var handleFilter = this.handleFilter.bind(this);
-
-            var CircularProgressExampleSimple = function CircularProgressExampleSimple() {
-                return _react2.default.createElement(
-                    'div',
-                    { className: 'spinner' },
-                    _react2.default.createElement(
-                        _MuiThemeProvider2.default,
-                        null,
-                        _react2.default.createElement(_CircularProgress2.default, { color: '#E91E63', size: 100, thickness: 4 })
-                    )
-                );
-            };
-            return _react2.default.createElement(
-                'div',
-                null,
-                this.props.fetched ? '' : _react2.default.createElement(CircularProgressExampleSimple, null),
-                _react2.default.createElement(_index2.default, { change: change, click: click, textFieldValue: textValue, filter: this.props.filter,
-                    handleFilter: handleFilter, fetched: this.props.fetched, inputEnter: enter }),
-                _react2.default.createElement(_Footer2.default, { items: this.props.items, done: done, drop: handleDrop })
-            );
-        }
-    }]);
-
-    return App;
-}(_react.Component);
+        }).catch(function (err) {
+            console.log('Fetch Error :-S', err);
+        });
+    };
+    return _react2.default.createElement(
+        'div',
+        null,
+        props.fetched ? '' : _react2.default.createElement(LoadSpinner, null),
+        _react2.default.createElement(_index2.default, { change: inputChange, fetched: props.fetched, click: buttonClick, value: props.textValue,
+            inputEnter: inputEnter, filter: props.filter, handleFilter: changeFilter }),
+        _react2.default.createElement(_Footer2.default, { items: props.items, done: toggleDone, drop: handleDrop })
+    );
+};
 
 function mapStateToProps(state) {
     return {
         items: state.items,
         filter: state.filter,
         fetched: state.fetched,
-        textValue: state.textValue
+        textValue: state.textValue,
+        dataLoaded: state.dataLoaded
     };
 }
 
@@ -27357,6 +27296,10 @@ var _temp = function () {
     __REACT_HOT_LOADER__.register(mapStateToProps, 'mapStateToProps', '/srv/http/react-todo/resources/assets/js/containers/App.js');
 
     __REACT_HOT_LOADER__.register(mapDispatchToProps, 'mapDispatchToProps', '/srv/http/react-todo/resources/assets/js/containers/App.js');
+
+    __REACT_HOT_LOADER__.register(componentMount, 'componentMount', '/srv/http/react-todo/resources/assets/js/containers/App.js');
+
+    __REACT_HOT_LOADER__.register(LoadSpinner, 'LoadSpinner', '/srv/http/react-todo/resources/assets/js/containers/App.js');
 
     __REACT_HOT_LOADER__.register(App, 'App', '/srv/http/react-todo/resources/assets/js/containers/App.js');
 
@@ -27472,7 +27415,7 @@ var Input = function Input(_ref3) {
 var Header = function Header(_ref4) {
     var click = _ref4.click,
         change = _ref4.change,
-        textFieldValue = _ref4.textFieldValue,
+        value = _ref4.value,
         filter = _ref4.filter,
         handleFilter = _ref4.handleFilter,
         fetched = _ref4.fetched,
@@ -27481,7 +27424,7 @@ var Header = function Header(_ref4) {
     return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(Input, { change: change, value: textFieldValue, inputEnter: inputEnter, disabled: fetched }),
+        _react2.default.createElement(Input, { change: change, value: value, inputEnter: inputEnter, disabled: fetched }),
         _react2.default.createElement(Button, { click: click, disabled: fetched }),
         _react2.default.createElement(Switcher, { filter: filter, handleFilter: handleFilter, disabled: fetched })
     );
@@ -39888,6 +39831,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.reset = reset;
+exports.dataloader = dataloader;
 exports.add = add;
 exports.del = del;
 exports.load = load;
@@ -39900,6 +39844,11 @@ function reset() {
         type: "RESET"
     };
 }
+
+function dataloader() {
+    return { type: 'DATA_LOADING' };
+}
+
 function add(item) {
     return {
         type: "ADD",
@@ -39953,6 +39902,8 @@ var _temp = function () {
     }
 
     __REACT_HOT_LOADER__.register(reset, "reset", "/srv/http/react-todo/resources/assets/js/actions/index.js");
+
+    __REACT_HOT_LOADER__.register(dataloader, "dataloader", "/srv/http/react-todo/resources/assets/js/actions/index.js");
 
     __REACT_HOT_LOADER__.register(add, "add", "/srv/http/react-todo/resources/assets/js/actions/index.js");
 
@@ -40287,6 +40238,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var initialState = {
     items: [],
     filter: false,
+    dataLoaded: false,
     fetched: false,
     textValue: ''
 };
@@ -40302,6 +40254,12 @@ var rootReducer = function rootReducer() {
                     items: action.payload
                 });
             }
+        case 'DATA_LOADING':
+            {
+                return _extends({}, state, {
+                    dataLoaded: true
+                });
+            }
         case 'TOGGLE_FETCHED':
             {
                 return _extends({}, state, { fetched: !state.fetched });
@@ -40309,7 +40267,7 @@ var rootReducer = function rootReducer() {
         case 'ADD':
             {
                 return _extends({}, state, {
-                    items: [].concat(_toConsumableArray(state.items), [action.payload])
+                    items: [action.payload].concat(_toConsumableArray(state.items))
                 });
             }
         case 'DEL':

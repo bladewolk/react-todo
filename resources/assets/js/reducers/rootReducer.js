@@ -1,6 +1,7 @@
 const initialState = {
     items: [],
     filter: false,
+    dataLoaded: false,
     fetched: false,
     textValue: ''
 }
@@ -13,6 +14,12 @@ const rootReducer = (state = initialState, action) =>{
                 items: action.payload
             }
         }
+        case 'DATA_LOADING': {
+            return {
+                ...state,
+                dataLoaded: true
+            }
+        }
         case 'TOGGLE_FETCHED':{
             return {...state, fetched: !state.fetched}
         }
@@ -20,8 +27,8 @@ const rootReducer = (state = initialState, action) =>{
             return {
                 ...state,
                 items: [
-                    ...state.items,
-                    action.payload
+                    action.payload,
+                    ...state.items
                 ]
             }
         }

@@ -16,7 +16,7 @@ module.exports = {
         filename: "bundle.js",
         publicPath: "/dev/",
     },
-    watch: true,
+    watch: false,
     plugins: debug ? [] : [
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.OccurenceOrderPlugin(),

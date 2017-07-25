@@ -3,6 +3,11 @@ export function reset(){
         type: "RESET"
     }
 }
+
+export function dataloader(){
+    return {type: 'DATA_LOADING'}
+}
+
 export function add(item){
     return {
         type: "ADD",

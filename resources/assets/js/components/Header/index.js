@@ -61,10 +61,10 @@ const Input = function({change, value, inputEnter, disabled}) {
     );
 };
 
-const Header = ({click, change, textFieldValue, filter, handleFilter, fetched, inputEnter}) => {
+const Header = ({click, change, value, filter, handleFilter, fetched, inputEnter}) => {
     return (
         <div>
-            <Input change={change} value={textFieldValue} inputEnter={inputEnter} disabled={fetched}/>
+            <Input change={change} value={value} inputEnter={inputEnter} disabled={fetched}/>
             <Button click={click} disabled={fetched}/>
             <Switcher filter={filter} handleFilter={handleFilter} disabled={fetched}/>
         </div>
