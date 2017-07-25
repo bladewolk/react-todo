@@ -66,7 +66,7 @@ const Header = ({click, change, value, filter, handleFilter, fetched, inputEnter
         <div>
             <Input change={change} value={value} inputEnter={inputEnter} disabled={fetched}/>
             <Button click={click} disabled={fetched}/>
-            <Switcher filter={filter} handleFilter={handleFilter} disabled={fetched}/>
+            <Switcher filter={!filter} handleFilter={handleFilter} disabled={fetched}/>
         </div>
     )
 }

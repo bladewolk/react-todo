@@ -14,11 +14,9 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('filter') && $request->filter == 'true'){
-            //$bool = $request->filter == 'true' ? true : false;
-            return Todo::whereDone(true)->get();
-        }
-        return Todo::latest()->get();
+        $bool = $request->done == 'true' ? true : false;
+
+        return Todo::whereDone($bool)->orderBy('id', 'desc')->get();
     }
 
     /**

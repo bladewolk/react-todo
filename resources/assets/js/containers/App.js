@@ -7,27 +7,6 @@ import * as actions from '../actions'
 import CircularProgress from 'material-ui/CircularProgress';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-const componentMount = ({ load, toggleFetched, dataloader }) => {
-    dataloader()
-    fetch('/api/todo')
-        .then(
-            function(response) {
-                if (response.status !== 200) {
-                    console.log('Looks like there was a problem. Status Code: ' +
-                        response.status);
-                    return;
-                }
-                response.json().then(function(data) {
-                    load(data);
-                    toggleFetched()
-                });
-            }
-        )
-        .catch(function(err) {
-            console.log('Fetch Error :-S', err);
-        });
-}
-
 const LoadSpinner = () => (
     <div className="spinner">
         <MuiThemeProvider>
@@ -37,8 +16,10 @@ const LoadSpinner = () => (
 );
 
 const App = props => {
-    if (!props.dataLoaded)
-        componentMount(props.actions)
+    if (!props.dataLoaded){
+        props.actions.dataloader()
+        props.actions.fetchGetTodos(props.filter)
+    }
 
     const inputChange = (event, value) => {
         props.actions.setTextFieldValue(value)
@@ -48,100 +29,22 @@ const App = props => {
             buttonClick()
     }
     const buttonClick = () => {
-        if (props.textValue.length > 0) {
+        if (props.textValue.length > 0){
             props.actions.toggleFetched()
-            fetch("/api/todo", {
-                method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({text: props.textValue})
-            })
-                .then(
-                    function (response) {
-                        if (response.status !== 200) {
-                            console.log('Looks like there was a problem. Status Code: ' +
-                                response.status);
-                            return;
-                        }
-                        response.json().then(function (data) {
-                            props.actions.add(data);
-                            props.actions.reset()
-                            props.actions.toggleFetched()
-                        });
-                    }
-                )
-                .catch(function (err) {
-                    console.log('Fetch Error :-S', err);
-                });
+            props.actions.fetchAddTodo(props.textValue)
         }
     }
     const changeFilter = () => {
-        props.actions.toggleFilter()
         props.actions.toggleFetched()
-        fetch("/api/todo?filter="+!props.filter)
-            .then(
-                function(response) {
-                    if (response.status !== 200) {
-                        console.log('Looks like there was a problem. Status Code: ' +
-                            response.status);
-                        return;
-                    }
-                    response.json().then(function(data) {
-                        props.actions.load(data)
-                        props.actions.toggleFetched()
-                    });
-                }
-            )
-            .catch(function(err) {
-                console.log('Fetch Error :-S', err);
-            });
+        props.actions.fetchGetTodos(props.filter)
     }
     const handleDrop = id => {
         props.actions.toggleFetched()
-        fetch("/api/todo/"+id, {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({_method: 'DELETE'})
-        })
-            .then(
-                function(response) {
-                    if (response.status !== 200) {
-                        console.log('Looks like there was a problem. Status Code: ' +
-                            response.status);
-                        return;
-                    }
-                    response.json().then(function(data) {
-                        props.actions.del(id)
-                        props.actions.toggleFetched()
-                    });
-                }
-            )
-            .catch(function(err) {
-                console.log('Fetch Error :-S', err);
-            });
+        props.actions.fetchDeleteTodo(id)
     }
     const toggleDone = id => {
         props.actions.toggleFetched()
-        fetch("/api/todo/"+id, {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id: id, _method: 'PATCH'})
-        })
-            .then(
-                function(response) {
-                    if (response.status !== 200) {
-                        console.log('Looks like there was a problem. Status Code: ' +
-                            response.status);
-                        return;
-                    }
-                    response.json().then(function(data) {
-                        props.actions.done(id)
-                        props.actions.toggleFetched()
-                    });
-                }
-            )
-            .catch(function(err) {
-                console.log('Fetch Error :-S', err);
-            });
+        props.actions.fetchUpdateTodo(id)
     }
     return (
         <div>
