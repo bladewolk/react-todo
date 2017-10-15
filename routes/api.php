@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Http\Request;
@@ -14,3 +15,6 @@ use Illuminate\Http\Request;
 */
 
 Route::resource('/todo', 'HomeController', ['except' => 'edit', 'create', 'show']);
+
+
+Route::resource('/todo2', 'AngularController', ['except' => 'edit', 'create', 'show']);
