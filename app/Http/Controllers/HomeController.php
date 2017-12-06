@@ -14,13 +14,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $todos = Todo::latest();
-        
-        if ($request->has('done')){
-            $todos->where('done', (int)$request->get('done'));            
-        }
-
-        return $todos->get();
+        return Todo::latest()->get();
     }
 
     /**
