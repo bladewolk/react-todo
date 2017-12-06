@@ -16,8 +16,8 @@ class HomeController extends Controller
     {
         $todos = Todo::latest();
         
-        if ($request->has('done') && $request->get('done') == true){
-            $todos->where('done', true);            
+        if ($request->has('done')){
+            $todos->where('done', (int)$request->get('done'));            
         }
 
         return $todos->get();
