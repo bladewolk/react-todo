@@ -14,10 +14,10 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $bool = $request->done == 'true' ? true : false;
+        $bool = $request->get('done') ? true : false;
 
-//         return Todo::whereDone($bool)->orderBy('id', 'desc')->get();
-        return Todo::latest()->get();
+         return Todo::whereDone($bool)->orderBy('id', 'desc')->get();
+        //return Todo::latest()->get();
         
     }
 
