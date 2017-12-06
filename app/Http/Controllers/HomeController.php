@@ -16,7 +16,7 @@ class HomeController extends Controller
     {
         $bool = $request->get('done') ? true : false;
 
-         return Todo::whereDone($bool)->orderBy('id', 'desc')->get();
+         return Todo::latest()->where('done', $bool)->get();
         //return Todo::latest()->get();
         
     }
