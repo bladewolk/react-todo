@@ -17,7 +17,7 @@ class HomeController extends Controller
         return Todo::lastest()->get();
         
         if ($request->has('done')){
-            $
+            
         }
         $bool = $request->get('done') ? true : false;
 
